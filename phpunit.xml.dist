@@ -2,9 +2,8 @@
 <phpunit bootstrap="core/tests/bootstrap.php" colors="true">
     <testsuites>
         <testsuite name="unit">
-            <!-- Use suffix to avoid errors if directories are empty -->
-            <directory suffix=".php">./modules/custom</directory>
-            <directory suffix=".php">./themes/custom</directory>
+            <directory>./modules/custom</directory>
+            <directory>./themes/custom</directory>
         </testsuite>
     </testsuites>
     <php>
@@ -12,4 +11,3 @@
         <env name="SIMPLETEST_BASE_URL" value="http://localhost"/>
     </php>
 </phpunit>
-
