@@ -3,11 +3,4 @@
     <testsuites>
         <testsuite name="unit">
             <directory suffix=".php">./modules/custom</directory>
-            <directory suffix=".php">./themes/custom</directory>
-        </testsuite>
-    </testsuites>
-    <php>
-        <env name="SIMPLETEST_DB" value="mysql://db:db@db/db"/>
-        <env name="SIMPLETEST_BASE_URL" value="http://localhost"/>
-    </php>
-</phpunit>
+            
