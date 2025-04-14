@@ -97,6 +97,9 @@
         }
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.5"
+        "behat/mink": "^1.10",
+        "behat/mink-selenium2-driver": "^1.6",
+        "phpunit/phpunit": "^9.5",
+        "symfony/css-selector": "^6.0"
     }
 }
