@@ -7,3 +7,4 @@ web/sites/*/files/
 .ddev/
 .env
 web/sites/*/settings.local.php
+sites/*/files/
