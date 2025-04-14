@@ -50,6 +50,13 @@ jobs:
           --account-name=admin \
           --account-pass=admin \
           --yes
+        # Sync UUID from config/sync
+        vendor/bin/drush config:get system.site:uuid --format=string > uuid.txt
+        vendor/bin/drush config:set system.site uuid $(cat uuid.txt) --yes
+        # Delete default shortcut set and links
+        vendor/bin/drush entity:delete shortcut_set default --yes || true
+        vendor/bin/drush entity:delete shortcut --yes || true
+        # Import config
         vendor/bin/drush config:import --yes
         vendor/bin/drush cache:rebuild
 
