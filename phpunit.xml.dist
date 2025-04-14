@@ -7,7 +7,7 @@
         </testsuite>
     </testsuites>
     <php>
-        <env name="SIMPLETEST_DB" value="mysql://drupal:drupal@db/drupal"/>
+        <env name="SIMPLETEST_DB" value="mysql://db:db@db/db"/>
         <env name="SIMPLETEST_BASE_URL" value="http://localhost"/>
     </php>
 </phpunit>
