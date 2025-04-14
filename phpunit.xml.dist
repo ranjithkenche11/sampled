@@ -2,8 +2,8 @@
 <phpunit bootstrap="core/tests/bootstrap.php" colors="true">
     <testsuites>
         <testsuite name="unit">
-            <directory>./modules/custom</directory>
-            <directory>./themes/custom</directory>
+            <directory suffix=".php">./modules/custom</directory>
+            <directory suffix=".php">./themes/custom</directory>
         </testsuite>
     </testsuites>
     <php>
