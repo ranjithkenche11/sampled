@@ -1,10 +1,9 @@
 vendor/
-web/core/
-web/modules/contrib/
-web/themes/contrib/
-web/profiles/contrib/
-web/sites/*/files/
+core/
+modules/contrib/
+themes/contrib/
+profiles/contrib/
+sites/*/files/
 .ddev/
 .env
-web/sites/*/settings.local.php
-sites/*/files/
+sites/*/settings.local.php
