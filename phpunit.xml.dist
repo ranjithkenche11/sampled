@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="core/tests/bootstrap.php" colors="true">
+    <testsuites>
+        <testsuite name="unit">
+            <directory>./modules/custom</directory>
+            <directory>./themes/custom</directory>
+        </testsuite>
+    </testsuites>
+    <php>
+        <env name="SIMPLETEST_DB" value="mysql://drupal:drupal@db/drupal"/>
+        <env name="SIMPLETEST_BASE_URL" value="http://localhost"/>
+    </php>
+</phpunit>

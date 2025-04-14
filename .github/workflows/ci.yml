@@ -1,0 +1,61 @@
+name: Drupal CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: drupal
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        extensions: mysql, gd, opcache, xml, zip
+        tools: composer
+
+    - name: Cache Composer dependencies
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: composer-${{ hashFiles('composer.lock') }}
+
+    - name: Install Composer dependencies
+      run: composer install --prefer-dist --no-progress
+
+    - name: Set up Drupal
+      env:
+        DB_HOST: 127.0.0.1
+        DB_PORT: 3306
+      run: |
+        vendor/bin/drush site:install minimal \
+          --db-url=mysql://root:root@$DB_HOST:$DB_PORT/drupal \
+          --account-name=admin \
+          --account-pass=admin \
+          --yes
+        vendor/bin/drush config:import --yes
+        vendor/bin/drush cache:rebuild
+
+    - name: Run PHPUnit tests
+      env:
+        SIMPLETEST_DB: mysql://root:root@127.0.0.1:3306/drupal
+        SIMPLETEST_BASE_URL: http://localhost
+      run: |
+        vendor/bin/phpunit --configuration phpunit.xml.dist
