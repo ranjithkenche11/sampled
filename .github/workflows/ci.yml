@@ -27,7 +27,7 @@ jobs:
     - name: Set up PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.3'  # Updated to match DDEV
+        php-version: '8.3'
         extensions: mysql, gd, opcache, xml, zip
         tools: composer
 
@@ -45,7 +45,7 @@ jobs:
         DB_HOST: 127.0.0.1
         DB_PORT: 3306
       run: |
-        vendor/bin/drush site:install minimal \
+        vendor/bin/drush site:install standard \
           --db-url=mysql://root:root@$DB_HOST:$DB_PORT/drupal \
           --account-name=admin \
           --account-pass=admin \
