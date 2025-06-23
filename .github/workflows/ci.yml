@@ -2,17 +2,19 @@ name: Drupal CI
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
-  build-and-test:
+  test:
     runs-on: ubuntu-latest
 
     services:
-      db:
-        image: mysql:8.0
+      mysql:
+        image: mysql:5.7
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: drupal
@@ -27,40 +29,31 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
-          extensions: mysql, gd, opcache, xml, zip
-          tools: composer
-
-      - name: Cache Composer dependencies
-        uses: actions/cache@v3
-        with:
-          path: vendor
-          key: composer-${{ hashFiles('composer.lock') }}
+          php-version: '8.1'
+          extensions: mysql, gd, opcache
 
       - name: Install Composer dependencies
-        run: composer install --prefer-dist --no-progress
+        run: composer install --no-progress --no-suggest
 
       - name: Set up Drupal
-        env:
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
         run: |
-          vendor/bin/drush site:install standard \
-            --db-url=mysql://root:root@$DB_HOST:$DB_PORT/drupal \
-            --account-name=admin \
-            --account-pass=admin \
-            --yes
-          UUID=$(grep '^uuid: ' config/sync/system.site.yml | cut -d' ' -f2)
-          vendor/bin/drush config:set system.site uuid "$UUID" --yes
-          vendor/bin/drush entity:delete shortcut_set default --yes || true
-          vendor/bin/drush entity:delete shortcut --yes || true
-          vendor/bin/drush config:import --yes
-          vendor/bin/drush en mymodule -y
-          vendor/bin/drush cache:rebuild
+          cp web/sites/default/default.settings.php web/sites/default/settings.php
+          echo "\$databases['default']['default'] = [
+            'database' => 'drupal',
+            'username' => 'root',
+            'password' => 'root',
+            'host' => '127.0.0.1',
+            'port' => '3306',
+            'driver' => 'mysql',
+            'prefix' => '',
+          ];" >> web/sites/default/settings.php
+          vendor/bin/drush site:install minimal --db-url=mysql://root:root@127.0.0.1:3306/drupal --yes
 
-      - name: Run PHPUnit tests
-        env:
-          SIMPLETEST_DB: mysql://root:root@127.0.0.1:3306/drupal
-          SIMPLETEST_BASE_URL: http://localhost
+      - name: Run code quality checks
         run: |
-          vendor/bin/phpunit --configuration phpunit.xml.dist
+          composer require --dev drupal/coder
+          vendor/bin/phpcs --standard=Drupal --extensions=php,module,inc,install,test,profile,theme web/modules/custom web/themes/custom
+
+      - name: Run unit tests
+        run: |
+          vendor/bin/phpunit --configuration web/core/phpunit.xml.dist web/modules/custom
